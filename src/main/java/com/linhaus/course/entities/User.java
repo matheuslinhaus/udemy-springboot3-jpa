@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +27,12 @@ public class User implements Serializable {
 	private String phone;
 	private String password;
 	
+	/*
+	 * Lazy loading quando tem um carregamento de 1 para muitos não carregar
+	 * Pois pode vir muita informação desnecessária já de muito para 1 pode 
+	 * Carregar a informação pois retornará apenas 1 informação a mais.
+	 */
+	@JsonIgnore
 	@OneToMany(mappedBy = "client")
 	private List<Order> orders = new ArrayList<>();
 	

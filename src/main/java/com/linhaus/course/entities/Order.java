@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,8 +23,16 @@ public class Order implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY	)
 	private Long id;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
 	private Instant moment;
 	
+	/*
+	 * Lazy loading quando tem um carregamento de 1 para muitos não carregar
+	 * Pois pode vir muita informação desnecessária
+	 * Já neste caso de muito para 1 pode 
+	 * Carregar a informação pois retornará apenas 1 informação a mais.
+	 */
 	@ManyToOne
 	@JoinColumn(name = "client_id")
 	private User client;
