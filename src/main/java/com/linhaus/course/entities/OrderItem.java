@@ -3,6 +3,7 @@ package com.linhaus.course.entities;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.linhaus.course.entities.pk.OrderItemPK;
 
 import jakarta.persistence.EmbeddedId;
@@ -11,39 +12,41 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_order_item")
-public class OrderItems implements Serializable {
+public class OrderItem implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	// identificador chave primaria
-	//Usar essa anotação para chave composta
+	// Usar essa anotação para chave composta
 	@EmbeddedId
-	private OrderItemPK id;
+	private OrderItemPK id = new OrderItemPK();
 	private Integer quantity;
 	private Double price;
 
-	public OrderItems() {
+	public OrderItem() {
 	}
 
-	public OrderItems(Order order, Product product, Integer quantity, Double price) {
+	public OrderItem(Order order, Product product, Integer quantity, Double price) {
 		super();
 		id.setOrder(order);
 		id.setProduct(product);
 		this.quantity = quantity;
 		this.price = price;
 	}
-	
+
+	// adicionar para que não haja um json com loop infinito
+	@JsonIgnore
 	public Order getOrder() {
 		return id.getOrder();
 	}
-	
+
 	public void setOrder(Order order) {
 		id.setOrder(order);
 	}
-	
+
 	public Product getProduct() {
 		return id.getProduct();
 	}
-	
+
 	public void setProduct(Product product) {
 		id.setProduct(product);
 	}
@@ -77,7 +80,7 @@ public class OrderItems implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OrderItems other = (OrderItems) obj;
+		OrderItem other = (OrderItem) obj;
 		return Objects.equals(id, other.id);
 	}
 }
