@@ -5,13 +5,14 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.linhaus.course.entities.User;
 import com.linhaus.course.repositories.UserRepository;
 import com.linhaus.course.services.exceptions.DatabaseException;
 import com.linhaus.course.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -48,9 +49,14 @@ public class UserService {
 		// não seja feito o findById. Dessa forma ele não faz acesso
 		// ao banco desnecessário, somente após feito o processo para
 		// atualizar
-		User entity = repository.getReferenceById(id);
-		updateData(entity, obj);
-		return repository.save(entity);
+		try {
+			
+			User entity = repository.getReferenceById(id);
+			updateData(entity, obj);
+			return repository.save(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(e.getMessage());
+		}
 	}
 
 	private void updateData(User entity, User obj) {
